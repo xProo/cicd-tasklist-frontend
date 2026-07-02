@@ -22,6 +22,12 @@ const mockTasks: Task[] = [
 	},
 ];
 
+const defaultProps = {
+	onToggle: vi.fn(),
+	onDelete: vi.fn(),
+	onEdit: vi.fn(),
+};
+
 describe('TaskList', () => {
 	it('shows loading state', () => {
 		render(
@@ -29,31 +35,71 @@ describe('TaskList', () => {
 				tasks={[]}
 				loading={true}
 				error={null}
-				onToggle={vi.fn()}
-				onDelete={vi.fn()}
-				onEdit={vi.fn()}
+				{...defaultProps}
 			/>
 		);
+
 		expect(screen.getByTestId('loading')).toBeInTheDocument();
 		expect(screen.getByText('Chargement des tâches...')).toBeInTheDocument();
 	});
 
-	it('renders list of tasks', () => {
+	it('shows error state', () => {
+		render(
+			<TaskList
+				tasks={[]}
+				loading={false}
+				error="Erreur réseau"
+				{...defaultProps}
+			/>
+		);
+
+		expect(screen.getByTestId('error')).toBeInTheDocument();
+		expect(screen.getByText('Erreur : Erreur réseau')).toBeInTheDocument();
+	});
+
+	it('shows empty state when no tasks', () => {
+		render(
+			<TaskList
+				tasks={[]}
+				loading={false}
+				error={null}
+				{...defaultProps}
+			/>
+		);
+
+		expect(screen.getByTestId('empty')).toBeInTheDocument();
+		expect(screen.getByText('Aucune tâche')).toBeInTheDocument();
+		expect(screen.getByText('Commencez par ajouter votre première tâche !')).toBeInTheDocument();
+	});
+
+	it('renders list of tasks with count', () => {
 		render(
 			<TaskList
 				tasks={mockTasks}
 				loading={false}
 				error={null}
-				onToggle={vi.fn()}
-				onDelete={vi.fn()}
-				onEdit={vi.fn()}
+				{...defaultProps}
 			/>
 		);
+
 		expect(screen.getByTestId('task-list')).toBeInTheDocument();
 		expect(screen.getByText('Première tâche')).toBeInTheDocument();
 		expect(screen.getByText('Deuxième tâche')).toBeInTheDocument();
 		expect(screen.getByText('2 tâches')).toBeInTheDocument();
+		expect(screen.getByText('1 terminée')).toBeInTheDocument();
 	});
 
-	// ... TODO: Add more tests
+	it('uses singular label for one task', () => {
+		render(
+			<TaskList
+				tasks={[mockTasks[0]]}
+				loading={false}
+				error={null}
+				{...defaultProps}
+			/>
+		);
+
+		expect(screen.getByText('1 tâche')).toBeInTheDocument();
+		expect(screen.getByText('0 terminée')).toBeInTheDocument();
+	});
 });
