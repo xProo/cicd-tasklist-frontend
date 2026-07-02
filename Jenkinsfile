@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         APP_NAME = 'tasklist-frontend'
-        DOCKER_IMAGE = 'xproo/tasklist-frontend'
+        DOCKER_IMAGE = 'sohane95/tasklist-frontend'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         VITE_API_URL = '/api'
     }
